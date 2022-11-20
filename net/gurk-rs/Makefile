@@ -1,41 +1,36 @@
 COMMENT =	Signal Messenger client for terminal
 
-V =		0.2.5
 GH_ACCOUNT =	boxdot
 GH_PROJECT =	gurk-rs
-GH_TAGNAME =	v${V}
+GH_TAGNAME =	v0.3.0
 
 CATEGORIES =	net
 
 MAINTAINER =	Stefan Hagen <sh+ports@codevoid.de>
 
-# LICENSE
+# AGPL 3.0
 PERMIT_PACKAGE =	Yes
 
-# as devel/cargo MODULES adds DISTFILES, GH_* didn't
-DISTFILES +=	${DISTNAME}${EXTRACT_SUFX}
+DISTFILES =	${DISTNAME}{master}${EXTRACT_SUFX}
+
+# vendor files (see $FILESDIR/config)
+MASTER_SITES0 =	https://codevoid.de/h/
+DISTFILES +=	${DISTNAME}-vendorfiles${EXTRACT_SUFX}:0
 
 MODULES =	devel/cargo
 
-.include "crates.inc"
+#MODCARGO_NO_DEFAULT_FEATURES =	Yes
 
 WANTLIB =	c c++abi pthread
 
-#LIB_DEPENDS =	
-#RUN_DEPENDS =	
-#BUILD_DEPENDS =	
-
-#TEST_DEPENDS =	
-
 CONFIGURE_STYLE =	cargo
 
-#MAKE_FLAGS =	
-
-#NO_TEST =	Yes
-#TEST_TARGET =	
+post-extract:
+	mv ${WRKDIR}/vendor ${WRKSRC}/vendor;
 
 pre-configure:
-	cat ${FILESDIR}/config >> ${WRKSRC}/.cargo/config.toml; \
-	cp -rf ${FILESDIR}/vendor ${WRKSRC}/
+	cat ${FILESDIR}/config >> ${WRKSRC}/.cargo/config
+
+.include "crates.inc"
 
 .include <bsd.port.mk>
