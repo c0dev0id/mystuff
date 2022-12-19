@@ -1,0 +1,92 @@
+[package]
+name = "gurk"
+description = "Signal messenger client for terminal"
+version = "0.3.0"
+authors = ["boxdot <d@zerovolt.org>"]
+edition = "2021"
+keywords = ["signal", "tui"]
+repository = "https://github.com/boxdot/gurk-rs"
+license = "AGPL-3.0-only"
+categories = ["command-line-utilities"]
+resolver = "2"
+
+[workspace]
+members = ["xtask"]
+
+[profile.dev.package.miniz_oxide]
+# This speeds up `cargo xtask dist`.
+opt-level = 0
+
+[profile.release]
+opt-level = 0
+debug = 0
+lto = false
+
+[features]
+dev = ["prost", "base64"]
+
+[dependencies]
+presage = { git = "https://github.com/whisperfish/presage", rev = "f84d958", default-features = false, features = ["sled-config-store"] }
+
+anyhow = "1.0.40"
+async-trait = "0.1.51"
+chrono = { version = "0.4.22", features = ["serde"] }
+crossterm = { version = "0.19.0", features = ["event-stream"] }
+derivative = "2.2.0"
+dirs = "3.0.2"
+emoji = "0.2.1"
+gh-emoji = "1.0.3"
+hostname = "0.3.1"
+itertools = "0.10.0"
+log-panics = "2.0.0"
+mime_guess = "2.0.3"
+notify-rust = "4.5.8"
+opener = "0.5.0"
+phonenumber = "0.3.1"
+regex-automata = "0.1.10"
+scopeguard = "1.1.0"
+serde = { version = "1.0.125", features = ["derive"] }
+serde_json = "1.0.64"
+textwrap = "0.14.2"
+tokio = { version = "1.5.0", default-features = false, features = ["rt-multi-thread", "macros", "net", "time"] }
+tokio-stream = "0.1.5"
+toml = "0.5.8"
+tui = { version = "0.15.0", default-features = false, features = ["crossterm"] }
+unicode-width = "0.1.8"
+uuid = { version = "1.2", features = ["v4"] }
+whoami = "1.1.2"
+tracing = "0.1.35"
+tracing-appender = "0.2.2"
+tracing-subscriber = "0.3.11"
+futures-channel = "0.3.24"
+qr2term = "0.3.0"
+clap = { version = "4.0.18", features = ["derive"] }
+
+# dev feature dependencies
+prost = { version = "0.10.0", optional = true }
+base64 = { version = "0.13.0", optional = true }
+
+[dev-dependencies]
+quickcheck = "1.0.3"
+quickcheck_macros = "1.0.0"
+tempfile = "3.2.0"
+criterion = { version = "0.4", features = ["async_tokio", "html_reports"] }
+
+[[bench]]
+name = "app"
+harness = false
+
+# [patch."https://github.com/whisperfish/presage.git"]
+# presage = { path = "../presage" }
+
+# [patch."https://github.com/whisperfish/libsignal-service-rs"]
+# libsignal-service = { path = "../libsignal-service-rs/libsignal-service" }
+# libsignal-service-hyper = { path = "../libsignal-service-rs/libsignal-service-hyper" }
+
+# [patch."https://github.com/signalapp/libsignal-client"]
+# libsignal-protocol = { path = "../libsignal-client/rust/protocol" }
+
+[patch.crates-io]
+# signal-protocol uses a fork of this library via the patch mechanism of cargo.
+# Since it is not transitive, we have to add the patch here explicitly.
+"curve25519-dalek" = { git = 'https://github.com/signalapp/curve25519-dalek', branch = 'lizard2' }

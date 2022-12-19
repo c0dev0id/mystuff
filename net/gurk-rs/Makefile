@@ -19,17 +19,15 @@ DISTFILES +=	${DISTNAME}-vendorfiles${EXTRACT_SUFX}:0
 
 MODULES =	devel/cargo
 
-#MODCARGO_NO_DEFAULT_FEATURES =	Yes
+WANTLIB =	${MODCARGO_WANTLIB}
 
-WANTLIB =	c c++abi pthread
+BUILD_DEPENDS =	devel/protobuf
 
 CONFIGURE_STYLE =	cargo
 
-post-extract:
-	mv ${WRKDIR}/vendor ${WRKSRC}/vendor;
-
-pre-configure:
-	cat ${FILESDIR}/config >> ${WRKSRC}/.cargo/config
+post-configure:
+	cat ${FILESDIR}/config >> ${WRKDIR}/.cargo/config
+	sed -i.bak 's/opt-level = 2/opt-level = 0/g' ${WRKDIR}/.cargo/config
 
 .include "crates.inc"
 
